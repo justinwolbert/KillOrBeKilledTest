@@ -1,0 +1,9 @@
+{
+  "FolderOrderSettings":[],
+  "ResourceOrderSettings":[
+    {"name":"obj_cam_shake","order":1,"path":"objects/obj_cam_shake/obj_cam_shake.yy",},
+    {"name":"obj_dust_impact","order":2,"path":"objects/obj_dust_impact/obj_dust_impact.yy",},
+    {"name":"screen_shake","order":1,"path":"scripts/screen_shake/screen_shake.yy",},
+    {"name":"spr_dust_impact","order":1,"path":"sprites/spr_dust_impact/spr_dust_impact.yy",},
+  ],
+}
