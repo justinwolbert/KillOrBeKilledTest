@@ -46,7 +46,7 @@ if (dash_state == 0) {
     } else {  
         // no input or both left+right pressed – gradually decelerate to 0
         if (abs(velocity_x) > 1) {
-            velocity_x -= sign(velocity_x) * decceleration_x;
+            velocity_x -= sign(velocity_x) * deceleration_x;
         } else {
             velocity_x = 0;
         }
