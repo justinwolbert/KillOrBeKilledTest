@@ -5,7 +5,7 @@
 
 /* === movement tuning === */
 acceleration_x  = 1;
-decceleration_x = 1;
+deceleration_x = 1;
 max_velocity_x  = 5;
 
 fall_speed      = 1.2;
