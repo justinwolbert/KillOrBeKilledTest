@@ -33,7 +33,7 @@ if (input_check_pressed("test"))
 #endregion
 
 #region enemy damage
-if (iframes > 0 && (iframes div 5) mod 2 == 0) exit;   // << new line
-draw_self();                                           // (your old draw code)
+//if (iframes > 0 && (iframes div 5) mod 2 == 0) exit;   // << new line
+//draw_self();                                           // (your old draw code)
 
 #endregion

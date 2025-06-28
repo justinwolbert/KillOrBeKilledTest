@@ -81,6 +81,7 @@
     {"id":{"name":"obj_cam_shake","path":"objects/obj_cam_shake/obj_cam_shake.yy",},},
     {"id":{"name":"obj_camera","path":"objects/obj_camera/obj_camera.yy",},},
     {"id":{"name":"obj_collision_wall","path":"objects/obj_collision_wall/obj_collision_wall.yy",},},
+    {"id":{"name":"obj_dashGhost","path":"objects/obj_dashGhost/obj_dashGhost.yy",},},
     {"id":{"name":"obj_dialog","path":"objects/obj_dialog/obj_dialog.yy",},},
     {"id":{"name":"obj_dust_impact","path":"objects/obj_dust_impact/obj_dust_impact.yy",},},
     {"id":{"name":"obj_enemy_parent","path":"objects/obj_enemy_parent/obj_enemy_parent.yy",},},

@@ -1,4 +1,6 @@
 {
   "FolderOrderSettings":[],
-  "ResourceOrderSettings":[],
+  "ResourceOrderSettings":[
+    {"name":"obj_dashGhost","order":1,"path":"objects/obj_dashGhost/obj_dashGhost.yy",},
+  ],
 }
