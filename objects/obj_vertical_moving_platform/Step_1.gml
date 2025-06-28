@@ -2,8 +2,14 @@
 var key_enter = keyboard_check_pressed(vk_enter);
 
 /* ─── state changes ───────────────────────── */
-if (move_state == 0 && key_enter) move_state = 1;   // begin slam down
-if (move_state == 2 && key_enter) move_state = 3;   // go back up
+if (move_state == 0 && key_enter
+ && collision_rectangle(bbox_left, bbox_top-5, bbox_right, bbox_top-1,
+obj_player, false, false)) move_state = 1; // begin slam down
+
+if (move_state == 2 && key_enter
+ && collision_rectangle(bbox_left, bbox_top-5, bbox_right, bbox_top-1,
+obj_player, false, false)) move_state = 3;   // go back up
+
 
 /* ─── move & physics ──────────────────────── */
 var oldy = y;

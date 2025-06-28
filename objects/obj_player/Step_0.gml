@@ -1,18 +1,17 @@
-//  obj_player : STEP
+//  obj_player : STEPMore actions
 //******************************************************************
 //  Features ✔
 //   1.  WASD-style move & gravity ✔
 //   2.  Coyote-time ✔
-//   3.  Jump-buffer
-//   4.  Double-jump
-//   5.  Momentum boost
-//   6.  Apex slow-fall
-//   7.  Celeste dash
-//   8.  Ground-pound (stub)
-//   9.  Wall-slide / climb (stub)
-//  10.  Sticky-feet snap (stub)
-//  11.  Moving-platform ride (basic)
-//  12.  Simple sword swing
+//   3.  Jump-buffer ✔
+//   4.  Momentum boost ✔
+//   5.  Apex slow-fall
+//   6.  Celeste dash ✔
+//   7.  Ground-pound (stub)
+//   8.  Wall-slide / climb (stub)
+//   9.  Moving-platform ride (basic)
+//  10.  Simple sword swing
+//  11.  Crouch ✔ 
 
 
 
@@ -25,6 +24,8 @@ var jump_pressed   = input_check_pressed("up")  || input_check_pressed("accept")
 var jump_released  = input_check_released("up") || input_check_released("accept");
 var dash_pressed   = input_check_pressed("dash");
 var attack_pressed = input_check_pressed("shoot");
+var crouch_held = input_check("crouch");
+
 
 // If player is stunned, decrement timer and ignore all inputs
 if (stun_timer > 0) {
@@ -35,23 +36,33 @@ if (stun_timer > 0) {
     attack_pressed = false;
 }
 
-/* 1. Horizontal Movement (only when not dashing) */
-if (dash_state == 0) {  
-    if (move_left && !move_right) {
-        // moving left – accelerate leftwards
-        velocity_x = clamp(velocity_x - acceleration_x, -max_velocity_x, max_velocity_x);
-    } else if (move_right && !move_left) {
-        // moving right – accelerate rightwards
-        velocity_x = clamp(velocity_x + acceleration_x, -max_velocity_x, max_velocity_x);
-    } else {  
-        // no input or both left+right pressed – gradually decelerate to 0
-        if (abs(velocity_x) > 1) {
-            velocity_x -= sign(velocity_x) * deceleration_x;
-        } else {
-            velocity_x = 0;
+/* 1. Horizontal Movement (only when not dashing) ---------------*/
+/*  ‣  If the Ctrl-key is held (crouch_held = true)
+    we run at 50 % speed: both the acceleration     (ax)
+    and the top speed (mx) are halved.                         */
+
+var ax = acceleration_x;   // default values
+var mx = max_velocity_x;
+
+if (crouch_held) {
+    ax *= 0.5;             // slower acceleration
+    mx *= 0.5;             // lower speed-cap
+}
+
+if (dash_state == 0) {
+    if (move_left  && !move_right) {
+        velocity_x = clamp(velocity_x - ax, -mx, mx);
+    }
+    else if (move_right && !move_left) {
+        velocity_x = clamp(velocity_x + ax, -mx, mx);
+    }
+    else {
+        // no input or both keys – glide to a stop
+        if (abs(velocity_x) > 1)  velocity_x -= sign(velocity_x) * deceleration_x;
+        else                      velocity_x  = 0;
         }
     }
-}
+	
 
 /* 2. Dash State Machine */
 if (dash_pressed && dash_state == 0) { 
@@ -59,25 +70,34 @@ if (dash_pressed && dash_state == 0) {
     dash_state = 1;
     dash_timer = dash_freeze;  // dash_freeze: frames to pause (anticipation)
 }
-switch (dash_state) {
-    case 1:  // Dash anticipation (freeze player briefly)
-        velocity_x = 0;
-        velocity_y = 0;
-        if (--dash_timer <= 0) {
-            // Transition to active dashing
-            dash_state = 2;
-            dash_timer = dash_length;            // dash_length: frames of dashing
-            velocity_x = facing_direction * dash_speed_x;  // burst speed in facing direction
-        }
-        break;
-    case 2:  // Dashing (travel)
-        velocity_y = 0;            // prevent vertical movement during dash
-        if (--dash_timer <= 0) { 
-            dash_state = 0;        // dash ends after dash_length frames
-        }
-        break;
-    // case 0 (idle) is handled implicitly above
-}
+switch (dash_state) 	{
+	case 1: // anticipation
+    if (--dash_timer <= 0) {
+        dash_state = 2;
+        dash_timer = dash_length;
+        velocity_x = facing_direction * dash_speed_x;
+
+        iframes = dash_length;
+        screen_shake(4, 8);
+    }
+    break;
+
+	case 2:  // active dash
+    velocity_y = 0;
+
+    // —— NEW way: drop a dedicated ghost ——
+    var g = instance_create_layer(x, y, layer, obj_dash_ghost);
+    g.sprite_index   = sprite_index;   // copy current sprite frame
+    g.image_index    = image_index;
+    g.image_angle    = image_angle;
+    g.image_xscale   = image_xscale;
+    g.image_yscale   = image_yscale;
+    g.image_blend    = _color;         // keep crouch tint if any
+    // ————————————————————————————————
+
+    if (--dash_timer <= 0) dash_state = 0;
+    break; }
+
 
 /* 3. Jumping (unified jump, coyote time, buffering, double-jump) */
 // Track how many frames since jump was pressed (for buffering)
@@ -88,6 +108,20 @@ if (jump_pressed) {
 }
 // Decrease coyote-time counter if not grounded
 coyote_timer = (grounded) ? coyote_frames : max(coyote_timer - 1, 0);
+
+
+//  block jumping while crouched
+// ----------------------------------------------------------------
+if (crouch_held) {
+    /* while crouched we:                               
+       1) forbid any jump this frame                  */  
+    var can_jump_override = false;
+    /* 2) clear the buffer so you don’t “store up” a press
+       that would fire the moment you release crouch  */  
+    frames_since_jump_press = buffer_frames + 1;
+}
+
+
 
 // Determine if a jump can occur (on ground, or coyote-time, or extra jumps left)
 var jump_buffered = (frames_since_jump_press <= buffer_frames);
@@ -160,6 +194,21 @@ if (
 /* 7. Integrate Movement and Handle Collisions */
 var new_x = x + velocity_x;
 var new_y = y + velocity_y;
+
+
+/* ---- Crouch edge-prevention ---- */
+if (crouch_held)
+{
+    // Is there ground one pixel below the spot we’re about to step onto?
+    if (place_free(new_x, y + 1))
+    {
+        // nothing beneath → cancel horizontal movement
+        new_x      = x;     // stay in place
+        velocity_x = 0;     // zero out h-speed for this frame
+    }
+}
+
+
 // Move horizontally if no obstacle, otherwise stop horizontal velocity
 if (place_free(new_x, y)) {
     x = new_x;
@@ -192,19 +241,42 @@ if (velocity_y > 0) {
     frames_falling = 0;
 }
 
+
+
 /* 9. Invincibility Frames (blink effect) */
-if (iframes > 0) {
+if (iframes > 0)
+{
     iframes--;
-    image_alpha = ((iframes div 5) mod 2);  // blink sprite on/off every few frames
-} else {
-    image_alpha = 1;
+
+    // --- colour flash only if this is DAMAGE invul, not dash invul
+    if (blink_red)
+    {
+        if ((iframes div 4) mod 2 == 0)
+            _color = c_red;
+        else
+            _color = c_white;
+    }
 }
+else
+{
+    blink_red = false;     // reset flag once timer expires
+    _color    = c_white;   // ensure colour back to normal
+}
+
 
 /* 10. Debug: Record Trail (position history for drawing) */
 record_line_x[record_frame]      = x;
 record_line_y[record_frame]      = y;
 record_line_colour[record_frame] = (velocity_y < 0 ? c_aqua : c_white);
 record_frame = (record_frame + 1) mod record_count;
+
+/* 11. Crouch:
+/* ───── simple crouch-visual ───── */
+if (crouch_held)
+{
+    // dark-grey tint while crouching
+    _color = c_dkgray; 
+}
 
 
 // Check for player death

@@ -1,9 +1,14 @@
 {
   "FolderOrderSettings":[],
   "ResourceOrderSettings":[
+    {"name":"obj_crate","order":3,"path":"objects/obj_crate/obj_crate.yy",},
+    {"name":"obj_dash_ghost","order":2,"path":"objects/obj_dash_ghost/obj_dash_ghost.yy",},
     {"name":"obj_horizontal_moving_platform","order":1,"path":"objects/obj_horizontal_moving_platform/obj_horizontal_moving_platform.yy",},
     {"name":"Tutorial_Level","order":1,"path":"rooms/Tutorial_Level/Tutorial_Level.yy",},
     {"name":"spr_checkpoint_flag","order":1,"path":"sprites/spr_checkpoint_flag/spr_checkpoint_flag.yy",},
     {"name":"spr_checkpoint_green","order":2,"path":"sprites/spr_checkpoint_green/spr_checkpoint_green.yy",},
+    {"name":"spr_crate_test","order":4,"path":"sprites/spr_crate_test/spr_crate_test.yy",},
+    {"name":"spr_crate","order":3,"path":"sprites/spr_crate/spr_crate.yy",},
+    {"name":"Sprite44","order":5,"path":"sprites/Sprite44/Sprite44.yy",},
   ],
 }

@@ -1,5 +1,6 @@
 // Default
 platform_dx = 0;
+var oldx = x;   // track previous position
 
 // Calculate intended movement
 var proposed_dx = hsp * move_dir;
@@ -17,13 +18,28 @@ if (inst != noone && inst.solid) {
 
     if (inst == noone || !inst.solid) {
         x += proposed_dx;
-        platform_dx = proposed_dx;
     }
     // Else: still blocked — don't move
 } else {
     // No collision — move and store movement
     x += proposed_dx;
-    platform_dx = proposed_dx;
 }
    
+// Amount moved this frame
+platform_dx = x - oldx;
+
+// If platform overlapped the player, push them out
+if (platform_dx != 0) {
+    var _player = instance_place(x, y, obj_player);
+    if (_player != noone) {
+        _player.x += platform_dx;
+        while (place_meeting(_player.x, _player.y, id)) {
+            _player.x += sign(platform_dx);
+        }
+    }
+
+}
+
+
+
 

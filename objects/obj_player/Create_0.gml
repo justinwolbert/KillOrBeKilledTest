@@ -16,7 +16,7 @@ jump_force      = -10;
 /* === jump QoL === */
 coyote_frames   = 8;     // grace frames after leaving floor
 buffer_frames   = 7;     // jump-buffer window
-max_jumps       = 2;     // 1 ⇒ no double-jump
+max_jumps       = 1;     // 1 ⇒ no double-jump
 
 /* === dash (Celeste style) === */
 dash_freeze   = 3;               // anticipation
@@ -66,7 +66,6 @@ position_x = x;
 position_y = y;
 
 
-
 // Initialize checkpoint to starting position if none saved
 if (!variable_global_exists("checkpoint_room")) {
     global.checkpoint_room = room;
@@ -99,3 +98,25 @@ respawn_player = function() {
     current_health = total_health;
     iframes = 0;
 };
+
+
+damage_health = function (_amt,
+                          _kb_h      = 3,
+                          _kb_v      = -2,
+                          _invul_sec = 3)
+					{	  
+    // already blinking?  then ignore hit
+    if (iframes > 0) exit;
+    
+    // 1) subtract HP
+    current_health = clamp(current_health - _amt, 0, total_health);
+    
+    // 2) give knock-back – very mild
+    var dir = sign(x - other.x);          // push away from attacker
+    velocity_x = _kb_h * dir;
+    velocity_y = _kb_v;
+
+    // 3) start invulnerability timer (frames)
+    iframes    = _invul_sec * room_speed;   // e.g. 3 s × 60 fps = 180 frames
+    blink_red  = true;                     // flag for draw code
+					};
