@@ -1,4 +1,9 @@
 {
   "FolderOrderSettings":[],
-  "ResourceOrderSettings":[],
+  "ResourceOrderSettings":[
+    {"name":"obj_horizontal_moving_platform","order":1,"path":"objects/obj_horizontal_moving_platform/obj_horizontal_moving_platform.yy",},
+    {"name":"Tutorial_Level","order":1,"path":"rooms/Tutorial_Level/Tutorial_Level.yy",},
+    {"name":"spr_checkpoint_flag","order":1,"path":"sprites/spr_checkpoint_flag/spr_checkpoint_flag.yy",},
+    {"name":"spr_checkpoint_green","order":2,"path":"sprites/spr_checkpoint_green/spr_checkpoint_green.yy",},
+  ],
 }

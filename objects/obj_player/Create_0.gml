@@ -68,7 +68,7 @@ position_y = y;
 
 
 // Initialize checkpoint to starting position if none saved
-if (is_undefined(global.checkpoint_room)) {
+if (!variable_global_exists("checkpoint_room")) {
     global.checkpoint_room = room;
     global.checkpoint_x = x;
     global.checkpoint_y = y;

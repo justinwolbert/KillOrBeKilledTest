@@ -142,6 +142,21 @@ if (platform != noone && velocity_y >= 0 && !jump_pressed) {
     grounded   = true;
 }
 
+// Horizontal Moving Platform Adjustment
+var h_platform = instance_place(x, bbox_bottom + 1, obj_horizontal_moving_platform);
+
+if (
+    h_platform != noone &&
+    velocity_y == 0 &&                      // Not jumping or falling
+    place_meeting(x, bbox_bottom + 1, obj_horizontal_moving_platform) &&
+    bbox_bottom <= h_platform.bbox_top + 2 &&
+    bbox_top < h_platform.bbox_top
+) {
+    x += h_platform.platform_dx;
+}
+
+
+
 /* 7. Integrate Movement and Handle Collisions */
 var new_x = x + velocity_x;
 var new_y = y + velocity_y;
