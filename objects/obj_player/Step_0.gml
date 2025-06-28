@@ -191,3 +191,8 @@ record_line_y[record_frame]      = y;
 record_line_colour[record_frame] = (velocity_y < 0 ? c_aqua : c_white);
 record_frame = (record_frame + 1) mod record_count;
 
+
+// Check for player death
+if (current_health <= 0) {
+    respawn_player();
+}

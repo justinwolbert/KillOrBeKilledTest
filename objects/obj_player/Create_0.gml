@@ -66,3 +66,36 @@ position_x = x;
 position_y = y;
 
 
+
+// Initialize checkpoint to starting position if none saved
+if (is_undefined(global.checkpoint_room)) {
+    global.checkpoint_room = room;
+    global.checkpoint_x = x;
+    global.checkpoint_y = y;
+}
+
+// Method to apply damage to the player
+/// @param _amount Amount of health to remove
+/// @param _iframes Length of invincibility frames
+ damage_health = function(_amount, _iframes = 45) {
+    if (iframes <= 0) {
+        current_health = max(current_health - _amount, 0);
+        if (current_health <= 0) {
+            respawn_player();
+        } else {
+            iframes = _iframes;
+        }
+    }
+};
+
+// Respawn the player at the last checkpoint
+respawn_player = function() {
+    if (room != global.checkpoint_room) {
+        room_goto(global.checkpoint_room);
+    } else {
+        x = global.checkpoint_x;
+        y = global.checkpoint_y;
+    }
+    current_health = total_health;
+    iframes = 0;
+};
